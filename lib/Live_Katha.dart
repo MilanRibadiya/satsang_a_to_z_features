@@ -3,12 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class Live_Katha extends StatefulWidget {
+class LiveKatha extends StatefulWidget {
   @override
-  _Live_KathaState createState() => _Live_KathaState();
+  _LiveKathaState createState() => _LiveKathaState();
 }
 
-class _Live_KathaState extends State<Live_Katha> {
+class _LiveKathaState extends State<LiveKatha> {
   Future<void> __launchBrowser(String _url) async {
     if (await canLaunch(_url)) {
       await launch(

@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:http/http.dart';
 import 'package:wallpaper_manager/wallpaper_manager.dart';
 
@@ -76,80 +75,80 @@ class _WallpaperState extends State<Wallpaper> {
               }
 
               return Expanded(
-                child: ListView.builder(
-                  itemCount: snapshot.data.length,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) => Padding(
-                    padding: const EdgeInsets.all(25.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Stack(
-                        alignment: AlignmentDirectional.bottomCenter,
-                        children: [
-                          CachedNetworkImage(
-                            imageUrl: snapshot.data[index]['url'].toString(),
+                child: Column(
+                  children: [
+                    ListView.builder(
+                      itemCount: snapshot.data.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) => Padding(
+                        padding: const EdgeInsets.all(25.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Stack(
+                            alignment: AlignmentDirectional.bottomCenter,
+                            children: [
+                              CachedNetworkImage(
+                                imageUrl: snapshot.data[index]['url'].toString(),
+                              ),
+                              GestureDetector(
+                                onTap: () => showCupertinoModalPopup(
+                                    context: context,
+                                    builder: (context) {
+                                      return CupertinoActionSheet(
+                                        title: Text(
+                                          "Satsang A to Z",
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        message: Text("Which place we are set this Wallpaper ?"),
+                                        cancelButton: CupertinoActionSheetAction(
+                                          child: Text("Cancel"),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        actions: [
+                                          CupertinoActionSheetAction(
+                                              child: Text("Home Screen"),
+                                              onPressed: () {
+                                                setWallpaperFromFile(
+                                                    snapshot.data[index]['url'].toString(), 1);
+                                                Navigator.of(context).pop();
+                                              }),
+                                          CupertinoActionSheetAction(
+                                              child: Text("Lock Screen"),
+                                              onPressed: () {
+                                                setWallpaperFromFile(
+                                                    snapshot.data[index]['url'].toString(), 2);
+                                                Navigator.of(context).pop();
+                                              }),
+                                          CupertinoActionSheetAction(
+                                              child: Text("Both"),
+                                              onPressed: () {
+                                                setWallpaperFromFile(
+                                                    snapshot.data[index]['url'].toString(), 3);
+                                                Navigator.of(context).pop();
+                                              }),
+                                        ],
+                                      );
+                                    }),
+                                child: Container(
+                                    height: 50,
+                                    color: Color.fromRGBO(189, 189, 189, 0.8),
+                                    alignment: Alignment.center,
+                                    width: double.infinity,
+                                    child: Text(
+                                      "Download",
+                                    )),
+                              )
+                            ],
                           ),
-                          GestureDetector(
-                            onTap: () => showCupertinoModalPopup(
-                                context: context,
-                                builder: (context) {
-                                  return CupertinoActionSheet(
-                                    title: Text(
-                                      "Satsang A to Z",
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    message: Text(
-                                        "Which place we are set this Wallpaper ?"),
-                                    cancelButton: CupertinoActionSheetAction(
-                                      child: Text("Cancel"),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                    actions: [
-                                      CupertinoActionSheetAction(
-                                          child: Text("Home Screen"),
-                                          onPressed: () {
-                                            setWallpaperFromFile(
-                                                snapshot.data[index]['url']
-                                                    .toString(),1);
-                                            Navigator.of(context).pop();
-                                          }),
-                                      CupertinoActionSheetAction(
-                                          child: Text("Lock Screen"),
-                                          onPressed: () {
-                                            setWallpaperFromFile(
-                                                snapshot.data[index]['url']
-                                                    .toString(),2);
-                                            Navigator.of(context).pop();
-                                          }),
-                                      CupertinoActionSheetAction(
-                                          child: Text("Both"),
-                                          onPressed: () {
-                                            setWallpaperFromFile(
-                                                snapshot.data[index]['url']
-                                                    .toString(),3);
-                                            Navigator.of(context).pop();
-                                          }),
-                                    ],
-                                  );
-                                }),
-                            child: Container(
-                                height: 50,
-                                color: Color.fromRGBO(189, 189, 189, 0.8),
-                                alignment: Alignment.center,
-                                width: double.infinity,
-                                child: Text(
-                                  "Download",
-                                )),
-                          )
-                        ],
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               );
             },

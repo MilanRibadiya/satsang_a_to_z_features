@@ -33,7 +33,7 @@ class _Registration_PageState extends State<Registration_Page> {
             decoration: BoxDecoration(
                 image: DecorationImage(
               fit: BoxFit.fill,
-              image: AssetImage("assets/images/registration_1.png"),
+              image: AssetImage("assets/images/home_title.png"),
             )),
             child: Padding(
               padding: const EdgeInsets.only(bottom: 70),
