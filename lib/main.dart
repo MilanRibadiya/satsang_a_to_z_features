@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:satsang_a_to_z_feature/Slider.dart';
+import 'package:satsang_a_to_z_feature/HomePage.dart';
 import 'package:satsang_a_to_z_feature/colors.dart';
 // import 'package:satsang_a_to_z_feature/Live_Katha.dart';
 
@@ -28,7 +28,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: SliderPage());
+    return Scaffold(body: HomePage());
   }
 
   @override

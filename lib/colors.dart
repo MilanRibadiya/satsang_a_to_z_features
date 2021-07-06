@@ -18,6 +18,6 @@ MaterialColor primaryMaterialColor = MaterialColor(0xffbc6c25, primarySwatch);
 Color primaryColor = Color(0xffbc6c25);
 Color mediumColor = Color(0xffd99a57);
 Color secondaryLightColor = Color(0xfff6c896);
-Color secondaryExtraLightColor = Color(0xfffefae0);
+Color secondaryExtraLightColor = Color(0xfff6f0c9);
 Color white = Colors.white;
 Color black = Colors.black;
