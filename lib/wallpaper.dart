@@ -17,7 +17,7 @@ class Wallpaper extends StatefulWidget {
 }
 
 class _WallpaperState extends State<Wallpaper> {
-  String _url = "https://satsang-a-to-z-api.kalakunjmandir.in/wallpaper";
+  String wallpaperUrl = "https://satsang-a-to-z-api.kalakunjmandir.in/wallpaper";
 
   StreamController _streamController;
   Stream _stream;
@@ -25,7 +25,7 @@ class _WallpaperState extends State<Wallpaper> {
   String _wallpaperFile = 'Unknown';
 
   getWallpaper() async {
-    Response response = await get(Uri.parse(_url));
+    Response response = await get(Uri.parse(wallpaperUrl));
     _streamController.add(json.decode(response.body));
   }
 
@@ -37,7 +37,7 @@ class _WallpaperState extends State<Wallpaper> {
     var file = await DefaultCacheManager().getSingleFile(url);
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      result = await WallpaperManager.setWallpaperFromFile(file.path, place);
+      result = await WallpaperManager.setWallpaperFromFile(file.path, WallpaperManager.HOME_SCREEN);
     } on PlatformException {
       result = 'Failed to get wallpaper.';
     }
@@ -62,16 +62,22 @@ class _WallpaperState extends State<Wallpaper> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "Wallpaper",
-            style: TextStyle(fontFamily: "baloobhai"),
-          ),
-          backgroundColor: primaryColor,
+    return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {},
+        label: Text("Mobile"),
+        icon: Icon(Icons.phone_iphone_rounded),
+        backgroundColor: primaryColor,
+      ),
+      appBar: AppBar(
+        title: Text(
+          "Wallpaper",
+          style: TextStyle(fontFamily: "baloobhai"),
         ),
-        body: Column(children: [
+        backgroundColor: primaryColor,
+      ),
+      body: SafeArea(
+        child: Column(children: [
           StreamBuilder(
             stream: _stream,
             builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -90,30 +96,61 @@ class _WallpaperState extends State<Wallpaper> {
                   mainAxisSpacing: 12,
                   itemCount: snapshot.data.length,
                   itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: GestureDetector(
-                        onTap: () {
-                          print("Swaminarayan");
-                          showDialog(
-                              context: context,
-                              builder: (_) => Dialog(
-                                    child: InteractiveViewer(
-                                      child: CachedNetworkImage(
-                                          imageUrl: snapshot.data[index]['image'].toString()),
-                                    ),
-                                  ));
-                        },
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(15),
-                          child: InteractiveViewer(
-                            child: CachedNetworkImage(
-                              imageUrl: snapshot.data[index]['image'].toString(),
+                    if (snapshot.data[index]['is_desktop']) {
+                      return Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            print("Swaminarayan");
+                            showDialog(
+                                context: context,
+                                builder: (_) => ClipRRect(
+                                      borderRadius: BorderRadius.circular(15),
+                                      child: Dialog(
+                                        child: Stack(
+                                          alignment: Alignment.bottomRight,
+                                          children: [
+                                            InteractiveViewer(
+                                              child: CachedNetworkImage(
+                                                  imageUrl: snapshot.data[index]['image'].toString()),
+                                            ),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                GestureDetector(
+                                                  onTap: () =>
+                                                      setWallpaperFromFile(snapshot.data[index]['image'], 1),
+                                                  child: Icon(
+                                                    Icons.wallpaper,
+                                                    color: Colors.white,
+                                                    size: 50,
+                                                  ),
+                                                ),
+                                                Icon(
+                                                  Icons.download_outlined,
+                                                  color: Colors.white,
+                                                  size: 50,
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ));
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: InteractiveViewer(
+                              child: CachedNetworkImage(
+                                imageUrl: snapshot.data[index]['image'].toString(),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    );
+                      );
+                    } else {
+                      return Container();
+                    }
                   },
                   staggeredTileBuilder: (int index) {
                     return new StaggeredTile.fit(1);

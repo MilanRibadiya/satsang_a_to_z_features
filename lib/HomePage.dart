@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
+import 'package:satsang_a_to_z_feature/Live_Katha.dart';
 import 'package:satsang_a_to_z_feature/colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -26,7 +27,7 @@ class _HomePageState extends State<HomePage> {
   StreamController sliderController, dailyDarshanController;
   Stream sliderStream, dailyDarshanStream;
 
-  int current = 0;
+  var pos = ValueNotifier(0);
 
   Connectivity connectivity;
   StreamSubscription<ConnectivityResult> subscription;
@@ -157,6 +158,24 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(bottom: 70.0),
+          child: SizedBox(
+            height: 65,
+            width: 65,
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => LiveKatha()));
+              },
+              child: Icon(
+                Icons.live_tv_outlined,
+                color: Colors.white,
+                size: 30,
+              ),
+              backgroundColor: Colors.red,
+            ),
+          ),
+        ),
         body: Stack(
           children: [
             Container(
@@ -207,48 +226,46 @@ class _HomePageState extends State<HomePage> {
                                     children: [
                                       Padding(
                                         padding: const EdgeInsets.only(top: 10.0, right: 45),
-                                        child: Expanded(
-                                          child: Container(
-                                            width: double.infinity,
-                                            child: Column(
-                                              children: [
-                                                Text(
-                                                  "SATSANG A TO Z",
-                                                  style: TextStyle(
-                                                    fontFamily: "baloobhai",
-                                                    fontSize: 28,
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.w800,
-                                                    letterSpacing: 1,
-                                                    shadows: <Shadow>[
-                                                      Shadow(
-                                                        offset: Offset(2.0, 2.0),
-                                                        blurRadius: 1.0,
-                                                        color: primaryColor,
-                                                      ),
-                                                    ],
-                                                  ),
+                                        child: Container(
+                                          width: double.infinity,
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                "SATSANG A TO Z",
+                                                style: TextStyle(
+                                                  fontFamily: "baloobhai",
+                                                  fontSize: 28,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w800,
+                                                  letterSpacing: 1,
+                                                  shadows: <Shadow>[
+                                                    Shadow(
+                                                      offset: Offset(2.0, 2.0),
+                                                      blurRadius: 1.0,
+                                                      color: primaryColor,
+                                                    ),
+                                                  ],
                                                 ),
-                                                Text(
-                                                  "HOME",
-                                                  style: TextStyle(
-                                                    fontSize: 20,
-                                                    fontFamily: "baloobhai",
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.white,
-                                                    height: 1,
-                                                    letterSpacing: 2,
-                                                    shadows: <Shadow>[
-                                                      Shadow(
-                                                        offset: Offset(1.5, 1.5),
-                                                        blurRadius: 1.0,
-                                                        color: primaryColor,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                )
-                                              ],
-                                            ),
+                                              ),
+                                              Text(
+                                                "HOME",
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontFamily: "baloobhai",
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.white,
+                                                  height: 1,
+                                                  letterSpacing: 2,
+                                                  shadows: <Shadow>[
+                                                    Shadow(
+                                                      offset: Offset(1.5, 1.5),
+                                                      blurRadius: 1.0,
+                                                      color: primaryColor,
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                            ],
                                           ),
                                         ),
                                       ),
@@ -323,9 +340,7 @@ class _HomePageState extends State<HomePage> {
                                         autoPlayCurve: Curves.easeInOut,
                                         enlargeCenterPage: true,
                                         onPageChanged: (sliderIndex, reason) {
-                                          setState(() {
-                                            current = sliderIndex;
-                                          });
+                                          pos.value = sliderIndex;
                                         },
                                       ),
                                       itemCount: snapshot.data.length,
@@ -360,13 +375,20 @@ class _HomePageState extends State<HomePage> {
                                           for (int i = 0; i < snapshot.data.length; i++)
                                             Padding(
                                               padding: const EdgeInsets.only(left: 4.0, right: 4.0),
-                                              child: AnimatedContainer(
-                                                  duration: Duration(milliseconds: 800),
-                                                  height: i == current ? 9 : 7,
-                                                  width: i == current ? 16 : 7,
-                                                  decoration: BoxDecoration(
-                                                      color: i == current ? Colors.white : Colors.grey[400],
-                                                      borderRadius: BorderRadius.circular(5))),
+                                              child: ValueListenableBuilder(
+                                                valueListenable: pos,
+                                                child: Dots(),
+                                                builder: (context, p, c) {
+                                                  return AnimatedContainer(
+                                                    duration: Duration(milliseconds: 800),
+                                                    height: i == p ? 9 : 7,
+                                                    width: i == p ? 16 : 7,
+                                                    decoration: BoxDecoration(
+                                                        color: i == p ? Colors.white : Colors.grey[400],
+                                                        borderRadius: BorderRadius.circular(5)),
+                                                  );
+                                                },
+                                              ),
                                             )
                                         ],
                                       ),
@@ -436,7 +458,7 @@ class _HomePageState extends State<HomePage> {
                                                                     ),
                                                                   ),
                                                                 ),
-                                                                Padding(
+                                                                /*Padding(
                                                                   padding: const EdgeInsets.only(
                                                                       top: 10,
                                                                       right: 10,
@@ -456,9 +478,8 @@ class _HomePageState extends State<HomePage> {
                                                                       ),
                                                                     ),
                                                                   ),
-                                                                ),
-                                                                Align(
-                                                                  alignment: Alignment.center,
+                                                                ),*/
+                                                                /*Center(
                                                                   child: ClipRRect(
                                                                     borderRadius:
                                                                         BorderRadius.all(Radius.circular(10)),
@@ -475,7 +496,7 @@ class _HomePageState extends State<HomePage> {
                                                                       width: 120,
                                                                     ),
                                                                   ),
-                                                                ),
+                                                                ),*/
                                                               ],
                                                             ),
                                                           ),
@@ -559,7 +580,7 @@ class _HomePageState extends State<HomePage> {
                                       );
                                     }
                                     return Container(
-                                      height: 230,
+                                      height: 300,
                                       width: double.infinity,
                                       child: Column(
                                         children: [
@@ -567,7 +588,7 @@ class _HomePageState extends State<HomePage> {
                                           Padding(
                                             padding: const EdgeInsets.only(top: 8.0),
                                             child: Container(
-                                              height: 170,
+                                              height: 242,
                                               child: ListView.builder(
                                                   scrollDirection: Axis.horizontal,
                                                   itemCount: snapshot.data.length,
@@ -577,7 +598,7 @@ class _HomePageState extends State<HomePage> {
                                                           top: 10.0, left: 15.0, right: 15.0, bottom: 15.0),
                                                       child: Container(
                                                         height: double.infinity,
-                                                        width: 178,
+                                                        width: 250,
                                                         decoration: BoxDecoration(
                                                             borderRadius: BorderRadius.circular(10),
                                                             color: Colors.white,
@@ -593,7 +614,7 @@ class _HomePageState extends State<HomePage> {
                                                             Column(
                                                               children: [
                                                                 CachedNetworkImage(
-                                                                  height: 100,
+                                                                  height: 150,
                                                                   imageUrl: snapshot.data[index].img,
                                                                   imageBuilder: (context, imageProvider) =>
                                                                       Container(
@@ -611,101 +632,115 @@ class _HomePageState extends State<HomePage> {
                                                                       Icon(Icons.error),
                                                                 ),
                                                                 Expanded(
-                                                                  child: Align(
-                                                                    alignment: Alignment.centerLeft,
-                                                                    child: Container(
-                                                                      height: 70,
-                                                                      width: 120,
-                                                                      alignment: Alignment.centerLeft,
-                                                                      child: Column(
-                                                                        children: [
-                                                                          Expanded(
-                                                                            child: Padding(
-                                                                              padding: const EdgeInsets.only(
-                                                                                left: 8.0,
-                                                                                top: 3,
-                                                                              ),
-                                                                              child: Text(
-                                                                                snapshot.data[index].detail,
-                                                                                overflow:
-                                                                                    TextOverflow.ellipsis,
-                                                                                textAlign: TextAlign.start,
-                                                                                style: TextStyle(
-                                                                                  fontSize: 14,
-                                                                                  fontFamily: "poppins",
-                                                                                  fontWeight: FontWeight.w800,
-                                                                                  color: Color(0xff993955),
+                                                                  child: Container(
+                                                                    decoration: BoxDecoration(
+                                                                        border: Border(
+                                                                            top: BorderSide(
+                                                                                color: Color(0xff993955),
+                                                                                width: 2))),
+                                                                    child: Padding(
+                                                                      padding: const EdgeInsets.only(top: 15),
+                                                                      child: Align(
+                                                                        alignment: Alignment.centerLeft,
+                                                                        child: Column(
+                                                                          children: [
+                                                                            Expanded(
+                                                                              child: Padding(
+                                                                                padding:
+                                                                                    const EdgeInsets.only(
+                                                                                  left: 8.0,
+                                                                                ),
+                                                                                child: Align(
+                                                                                  alignment:
+                                                                                      Alignment.centerLeft,
+                                                                                  child: Text(
+                                                                                    snapshot
+                                                                                        .data[index].detail,
+                                                                                    textAlign:
+                                                                                        TextAlign.start,
+                                                                                    maxLines: 1,
+                                                                                    style: TextStyle(
+                                                                                      fontSize: 16,
+                                                                                      fontFamily: "poppins",
+                                                                                      fontWeight:
+                                                                                          FontWeight.w800,
+                                                                                      color:
+                                                                                          Color(0xff993955),
+                                                                                    ),
+                                                                                  ),
                                                                                 ),
                                                                               ),
                                                                             ),
-                                                                          ),
-                                                                          Expanded(
-                                                                            child: Text(
-                                                                              snapshot.data[index].detail,
-                                                                              overflow: TextOverflow.ellipsis,
-                                                                              textAlign: TextAlign.start,
-                                                                              style: TextStyle(
-                                                                                fontSize: 10,
-                                                                                color: Color(0xffffaec5),
-                                                                                fontFamily: "poppins",
-                                                                                fontWeight: FontWeight.w600,
+                                                                            Expanded(
+                                                                              child: Padding(
+                                                                                padding:
+                                                                                    const EdgeInsets.only(
+                                                                                  left: 8.0,
+                                                                                ),
+                                                                                child: Align(
+                                                                                  alignment:
+                                                                                      Alignment.centerLeft,
+                                                                                  child: Text(
+                                                                                    snapshot
+                                                                                        .data[index].detail,
+                                                                                    textAlign:
+                                                                                        TextAlign.start,
+                                                                                    maxLines: 1,
+                                                                                    style: TextStyle(
+                                                                                      fontSize: 12,
+                                                                                      color: Colors.grey,
+                                                                                      fontFamily: "poppins",
+                                                                                      fontWeight:
+                                                                                          FontWeight.w600,
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
                                                                               ),
                                                                             ),
-                                                                          ),
-                                                                        ],
+                                                                          ],
+                                                                        ),
                                                                       ),
                                                                     ),
                                                                   ),
                                                                 )
                                                               ],
                                                             ),
-                                                            Padding(
-                                                              padding: const EdgeInsets.only(
-                                                                right: 8.0,
-                                                                top: 8.0,
-                                                                bottom: 16.0,
-                                                              ),
-                                                              child: Align(
-                                                                alignment: Alignment.bottomRight,
+                                                            Align(
+                                                              alignment: Alignment.topCenter,
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.only(
+                                                                  right: 10.0,
+                                                                  top: 135.0,
+                                                                  bottom: 30.0,
+                                                                ),
                                                                 child: Container(
-                                                                  height: 56,
-                                                                  width: 40,
+                                                                  height: 28,
+                                                                  width: 140,
                                                                   decoration: BoxDecoration(
-                                                                      borderRadius: BorderRadius.circular(7),
-                                                                      color: Color(0xff993955),
-                                                                      border: Border.all(
-                                                                          color: Colors.white, width: 1.5)),
+                                                                      color: Colors.white,
+                                                                      borderRadius: BorderRadius.circular(15),
+                                                                      boxShadow: [
+                                                                        BoxShadow(
+                                                                          color: Colors.grey[350],
+                                                                          blurRadius: 3,
+                                                                          offset: Offset(2, 3),
+                                                                        ),
+                                                                      ]),
                                                                   child: Padding(
                                                                     padding: const EdgeInsets.all(3.0),
-                                                                    child: Column(
+                                                                    child: Row(
                                                                       children: [
                                                                         Expanded(
                                                                           child: Text(
-                                                                            "26",
-                                                                            textAlign: TextAlign.center,
-                                                                            style: TextStyle(
-                                                                              color: Colors.white,
-                                                                              fontSize: 18,
-                                                                              fontFamily: "baloobhai",
-                                                                              fontWeight: FontWeight.bold,
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        Container(
-                                                                          height: 1,
-                                                                          width: 30,
-                                                                          color: Colors.white,
-                                                                        ),
-                                                                        Expanded(
-                                                                          child: Text(
-                                                                            "September",
+                                                                            "18 Sept. 2021",
                                                                             overflow: TextOverflow.ellipsis,
                                                                             textAlign: TextAlign.center,
                                                                             style: TextStyle(
-                                                                              color: Colors.white,
-                                                                              fontSize: 15,
-                                                                              fontFamily: "baloobhai",
-                                                                            ),
+                                                                                color: Color(0xff1B6488),
+                                                                                fontSize: 18,
+                                                                                height: 1.15,
+                                                                                fontFamily: "baloobhai",
+                                                                                fontWeight: FontWeight.w600),
                                                                           ),
                                                                         ),
                                                                       ],
@@ -872,6 +907,12 @@ class DarshanModel {
     data['images'] = this.images;
     return data;
   }
+}
+
+AnimatedContainer Dots() {
+  return AnimatedContainer(
+      duration: Duration(milliseconds: 800),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)));
 }
 
 class FeatureTitle extends StatelessWidget {
