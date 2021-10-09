@@ -82,6 +82,25 @@ class _NiyamSelectionState extends State<NiyamSelection> {
                       },
                     ),
                   ),*/
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20, bottom: 20),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("assets/images/niyam_heading.png"), fit: BoxFit.cover),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 50, right: 50),
+                        child: Text(
+                          "Niyam Selection",
+                          style: TextStyle(
+                            fontFamily: "baloobhai",
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   Expanded(
                     child: ListView.builder(
                         itemCount: _texts.length,
@@ -137,6 +156,12 @@ class _NiyamSelectionState extends State<NiyamSelection> {
                           );
                         }),
                   ),
+                  MaterialButton(
+                    child: Text("Select"),
+                    onPressed: () {},
+                    color: primaryColor,
+                    textColor: Colors.white,
+                  )
                 ],
               ),
             ),

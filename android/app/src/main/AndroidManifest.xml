@@ -2,6 +2,9 @@
     package="com.example.satsang_a_to_z_feature">
 
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
    <application
         android:label="satsang_a_to_z_feature"
         android:icon="@mipmap/ic_launcher">

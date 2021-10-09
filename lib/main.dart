@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:satsang_a_to_z_feature/HomePage.dart';
+import 'package:satsang_a_to_z_feature/YoutubePlayerIframe.dart';
 import 'package:satsang_a_to_z_feature/colors.dart';
-// import 'package:satsang_a_to_z_feature/Live_Katha.dart';
 
 void main() {
   runApp(MyApp());
@@ -28,7 +27,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: HomePage());
+    return Scaffold(body: YoutubePlayerIframe());
   }
 
   @override

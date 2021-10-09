@@ -29,16 +29,14 @@ class _LiveKathaState extends State<LiveKatha> {
         CircularProgressIndicator();
         debugPrint(progress.toString());
       },
-      initialUrl:
-          "https://www.youtube.com/embed/live_stream?channel=UCnsiyoETbqJnOde5yG-ZWxQ",
+      initialUrl: "https://www.youtube.com/embed/live_stream?channel=UCnsiyoETbqJnOde5yG-ZWxQ",
       javascriptMode: JavascriptMode.unrestricted,
       userAgent:
           "Moilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2049.0 Safari/537.36",
       navigationDelegate: (NavigationRequest request) {
         if (request.url.startsWith("https://www.youtube.com/watch?") ||
             request.url.startsWith("https://www.youtube.com/channel")) {
-          __launchBrowser(
-              'https://youtube.com/c/Gunatit1008byKalakunjMandirSurat');
+          __launchBrowser('https://youtube.com/c/Gunatit1008byKalakunjMandirSurat');
           return NavigationDecision.prevent;
         } else if (request.url.startsWith('https://www.youtube.com/') ||
             request.url.startsWith('https://support.google.com/')) {

@@ -12,6 +12,7 @@ import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:satsang_a_to_z_feature/Live_Katha.dart';
 import 'package:satsang_a_to_z_feature/colors.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,7 +20,8 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
+  bool get wantKeepAlive => true;
   String sliderUrl = "https://satsang-a-to-z-api.kalakunjmandir.in/slider/";
   String dailyDarshanUrl = "https://satsang-a-to-z-api.kalakunjmandir.in/dailydarshan/7/";
   String upcomingEventUrl = "https://satsang-a-to-z-api.kalakunjmandir.in/upcoming/";
@@ -156,6 +158,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return SafeArea(
       child: Scaffold(
         floatingActionButton: Padding(
@@ -321,11 +324,45 @@ class _HomePageState extends State<HomePage> {
                             stream: sliderStream,
                             builder: (BuildContext ctx, AsyncSnapshot snapshot) {
                               if (!snapshot.hasData) {
-                                return Container(
+                                return CarouselSlider.builder(
+                                  options: CarouselOptions(
+                                    autoPlay: true,
+                                    height: 180.0,
+                                    enableInfiniteScroll: true,
+                                    autoPlayAnimationDuration: Duration(seconds: 1),
+                                    autoPlayCurve: Curves.easeInOut,
+                                    enlargeCenterPage: true,
+                                    onPageChanged: (sliderIndex, reason) {
+                                      pos.value = sliderIndex;
+                                    },
+                                  ),
+                                  itemCount: 3,
+                                  itemBuilder: (context, index, realIdx) {
+                                    return Shimmer.fromColors(
+                                      highlightColor: Colors.white,
+                                      baseColor: Colors.grey[200],
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(16.0),
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                                /*return Container(
                                   height: 180.0,
                                   width: 350.0,
-                                  color: Colors.grey,
-                                );
+                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
+                                  child: Shimmer.fromColors(
+                                    child: Image.asset(
+                                      "assets/images/app_logo.png",
+                                      fit: BoxFit.fill,
+                                    ),
+                                    baseColor: Colors.grey,
+                                    highlightColor: Colors.white,
+                                  ),
+                                );*/
                               }
 
                               return Stack(
@@ -360,8 +397,6 @@ class _HomePageState extends State<HomePage> {
                                                 ),
                                               ),
                                             ),
-                                            placeholder: (context, url) => CircularProgressIndicator(),
-                                            errorWidget: (context, url, error) => Icon(Icons.error),
                                           ),
                                         );
                                       }),
@@ -401,149 +436,478 @@ class _HomePageState extends State<HomePage> {
                         ),
                         Column(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 35),
-                              child: FutureBuilder(
-                                  future: getDarshanUrl(),
-                                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                                    if (!snapshot.hasData) {
-                                      return Container(
-                                        height: 200.0,
-                                        width: 350.0,
-                                        color: Colors.blue,
-                                      );
-                                    }
+                            FeatureTitle("Daily Darshan", Color(0xffb4dcef), Color(0xff1B6488), () {
+                              print("Daily Darshan");
+                            }),
+                            FutureBuilder(
+                                future: getDarshanUrl(),
+                                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                                  if (!snapshot.hasData) {
                                     return Container(
-                                      width: double.infinity,
-                                      child: Column(
-                                        children: [
-                                          FeatureTitle("Daily Darshan", Color(0xffb4dcef), Color(0xff1B6488)),
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: 8.0),
+                                      height: 190,
+                                      child: ListView.builder(
+                                        itemCount: 7,
+                                        scrollDirection: Axis.horizontal,
+                                        itemBuilder: (context, index) {
+                                          return Padding(
+                                            padding: const EdgeInsets.only(left: 20.0, right: 20, top: 20),
                                             child: Container(
-                                              height: 183,
-                                              child: ListView.builder(
-                                                  scrollDirection: Axis.horizontal,
-                                                  itemCount: snapshot.data.length,
-                                                  itemBuilder: (BuildContext context, int index) {
-                                                    return Container(
-                                                      width: 215,
-                                                      height: 220,
-                                                      child: Stack(
-                                                        children: [
-                                                          Padding(
-                                                            padding: const EdgeInsets.only(
-                                                                left: 7, right: 7, top: 7, bottom: 25),
-                                                            child: Stack(
-                                                              fit: StackFit.expand,
-                                                              children: [
-                                                                Padding(
+                                              width: 215,
+                                              height: 220,
+                                              child: Stack(
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(bottom: 30),
+                                                    child: Stack(
+                                                      children: [
+                                                        Transform.rotate(
+                                                          angle: pi / 20,
+                                                          child: Shimmer.fromColors(
+                                                            highlightColor: Colors.white,
+                                                            baseColor: Colors.grey[200],
+                                                            child: Align(
+                                                              alignment: Alignment.centerRight,
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.only(bottom: 8.0),
+                                                                child: Container(
+                                                                  width: 110,
+                                                                  height: 130,
+                                                                  decoration: BoxDecoration(
+                                                                    borderRadius: BorderRadius.circular(10),
+                                                                    color: Colors.grey[200],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Transform.rotate(
+                                                          angle: pi / -20,
+                                                          child: Shimmer.fromColors(
+                                                            highlightColor: Colors.white,
+                                                            baseColor: Colors.grey[200],
+                                                            child: Align(
+                                                              alignment: Alignment.centerLeft,
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.only(bottom: 8.0),
+                                                                child: Container(
+                                                                  width: 110,
+                                                                  height: 130,
+                                                                  decoration: BoxDecoration(
+                                                                    borderRadius: BorderRadius.circular(10),
+                                                                    color: Colors.grey[200],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Center(
+                                                          child: Shimmer.fromColors(
+                                                            highlightColor: Colors.white,
+                                                            baseColor: Colors.grey[200],
+                                                            child: Container(
+                                                              height: 140,
+                                                              width: 120,
+                                                              decoration: BoxDecoration(
+                                                                borderRadius: BorderRadius.circular(10),
+                                                                color: Colors.grey[200],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Align(
+                                                    alignment: Alignment.bottomCenter,
+                                                    child: Shimmer.fromColors(
+                                                      highlightColor: Colors.white,
+                                                      baseColor: Colors.grey[200],
+                                                      child: Container(
+                                                        height: 60,
+                                                        width: 60,
+                                                        decoration: BoxDecoration(
+                                                            color: Colors.pink,
+                                                            borderRadius: BorderRadius.circular(50)),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  }
+                                  return Container(
+                                    width: double.infinity,
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          height: 190,
+                                          child: ListView.builder(
+                                              scrollDirection: Axis.horizontal,
+                                              itemCount: snapshot.data.length,
+                                              itemBuilder: (BuildContext context, int index) {
+                                                return Container(
+                                                  width: 230,
+                                                  height: 220,
+                                                  child: Stack(
+                                                    children: [
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(
+                                                            left: 7, right: 7, top: 7, bottom: 25),
+                                                        child: Stack(
+                                                          children: [
+                                                            Align(
+                                                              alignment: Alignment.centerRight,
+                                                              child: Container(
+                                                                width: 145,
+                                                                height: 140,
+                                                                child: Padding(
                                                                   padding: const EdgeInsets.only(
-                                                                      top: 15.5,
-                                                                      right: 7,
-                                                                      left: 10,
-                                                                      bottom: 5),
+                                                                    top: 7,
+                                                                    right: 10,
+                                                                    left: 10,
+                                                                  ),
                                                                   child: Transform.rotate(
                                                                     angle: pi / 20,
                                                                     child: ClipRRect(
                                                                       borderRadius: BorderRadius.circular(10),
                                                                       child: CachedNetworkImage(
-                                                                          alignment: Alignment.centerRight,
-                                                                          imageUrl:
-                                                                              snapshot.data[index].images[2],
-                                                                          errorWidget: (context, url,
-                                                                                  error) =>
-                                                                              Image.asset(
-                                                                                  "assets/images/logo.png")),
+                                                                        alignment: Alignment.centerRight,
+                                                                        imageUrl:
+                                                                            snapshot.data[index].images[2],
+                                                                        imageBuilder:
+                                                                            (context, imgProvider) =>
+                                                                                Container(
+                                                                          decoration: BoxDecoration(
+                                                                            color: Colors.green,
+                                                                            image: DecorationImage(
+                                                                                image: imgProvider,
+                                                                                fit: BoxFit.cover),
+                                                                          ),
+                                                                        ),
+                                                                        placeholder: (context, url) =>
+                                                                            Image.asset(
+                                                                                "assets/images/logo.png"),
+                                                                        errorWidget: (context, url, error) =>
+                                                                            Image.asset(
+                                                                                "assets/images/logo.png"),
+                                                                      ),
                                                                     ),
                                                                   ),
                                                                 ),
-                                                                /*Padding(
-                                                                  padding: const EdgeInsets.only(
-                                                                      top: 10,
-                                                                      right: 10,
-                                                                      left: 10,
-                                                                      bottom: 5),
-                                                                  child: Transform.rotate(
-                                                                    angle: pi / -20,
-                                                                    child: ClipRRect(
-                                                                      borderRadius: BorderRadius.circular(10),
-                                                                      child: CachedNetworkImage(
-                                                                        alignment: Alignment.centerLeft,
-                                                                        imageUrl:
-                                                                            snapshot.data[index].images[0],
-                                                                        errorWidget: (context, url, error) =>
-                                                                            Image.asset(
-                                                                                "assets/images/logo.png"),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),*/
-                                                                /*Center(
+                                                              ),
+                                                            ),
+                                                            Align(
+                                                              alignment: Alignment.centerLeft,
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.only(
+                                                                  top: 15,
+                                                                  right: 10,
+                                                                  left: 10,
+                                                                ),
+                                                                child: Transform.rotate(
+                                                                  angle: pi / -20,
                                                                   child: ClipRRect(
-                                                                    borderRadius:
-                                                                        BorderRadius.all(Radius.circular(10)),
-                                                                    child: Container(
-                                                                      child: CachedNetworkImage(
-                                                                        imageUrl:
-                                                                            snapshot.data[index].images[1],
-                                                                        fit: BoxFit.cover,
-                                                                        errorWidget: (context, url, error) =>
-                                                                            Image.asset(
-                                                                                "assets/images/logo.png"),
-                                                                      ),
-                                                                      height: 150,
-                                                                      width: 120,
+                                                                    borderRadius: BorderRadius.circular(10),
+                                                                    child: CachedNetworkImage(
+                                                                      alignment: Alignment.centerLeft,
+                                                                      imageUrl:
+                                                                          snapshot.data[index].images[0],
+                                                                      placeholder: (context, url) =>
+                                                                          Image.asset(
+                                                                              "assets/images/logo.png"),
+                                                                      errorWidget: (context, url, error) =>
+                                                                          Image.asset(
+                                                                              "assets/images/logo.png"),
                                                                     ),
                                                                   ),
-                                                                ),*/
-                                                              ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Center(
+                                                              child: ClipRRect(
+                                                                borderRadius:
+                                                                    BorderRadius.all(Radius.circular(10)),
+                                                                child: Container(
+                                                                  child: CachedNetworkImage(
+                                                                    imageUrl: snapshot.data[index].images[1],
+                                                                    fit: BoxFit.cover,
+                                                                    placeholder: (context, url) =>
+                                                                        Image.asset("assets/images/logo.png"),
+                                                                    errorWidget: (context, url, error) =>
+                                                                        Image.asset("assets/images/logo.png"),
+                                                                  ),
+                                                                  height: 160,
+                                                                  width: 120,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Align(
+                                                        alignment: Alignment.bottomCenter,
+                                                        child: Container(
+                                                          width: 50,
+                                                          height: 50,
+                                                          decoration: BoxDecoration(
+                                                            color: Color(0xff1B6488),
+                                                            borderRadius: BorderRadius.circular(50),
+                                                            border: Border.all(color: Colors.white, width: 2),
+                                                          ),
+                                                          child: Align(
+                                                            alignment: Alignment.center,
+                                                            child: Padding(
+                                                              padding: const EdgeInsets.all(8.0),
+                                                              child: Column(
+                                                                children: [
+                                                                  Expanded(
+                                                                    child: Text(
+                                                                      snapshot.data[index].day.toString(),
+                                                                      style: TextStyle(
+                                                                        color: Colors.white,
+                                                                        fontSize: 18,
+                                                                        fontFamily: "baloobhai",
+                                                                        fontWeight: FontWeight.w800,
+                                                                        height: 1,
+                                                                      ),
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                      textAlign: TextAlign.center,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    child: Text(
+                                                                      snapshot.data[index].month.toString(),
+                                                                      style: TextStyle(
+                                                                        color: Colors.white,
+                                                                        fontSize: 14,
+                                                                        fontFamily: "baloobhai",
+                                                                        fontWeight: FontWeight.w400,
+                                                                        height: 1,
+                                                                      ),
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                      textAlign: TextAlign.center,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
                                                             ),
                                                           ),
-                                                          Align(
-                                                            alignment: Alignment.bottomCenter,
-                                                            child: Container(
-                                                              width: 50,
-                                                              height: 50,
-                                                              decoration: BoxDecoration(
-                                                                color: Color(0xff1B6488),
-                                                                borderRadius: BorderRadius.circular(50),
-                                                                border:
-                                                                    Border.all(color: Colors.white, width: 2),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                );
+                                              }),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            FeatureTitle("Recent Events", Color(0xffffaec5), Color(0xff993955), () {
+                              print("Recent Events");
+                            }),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 20),
+                              child: FutureBuilder(
+                                  future: getUpcomingUrl(),
+                                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return Container(
+                                        height: 242,
+                                        width: double.infinity,
+                                        child: ListView.builder(
+                                            itemCount: 7,
+                                            scrollDirection: Axis.horizontal,
+                                            itemBuilder: (context, index) {
+                                              return Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 10.0, left: 15.0, right: 15.0, bottom: 15.0),
+                                                child: Shimmer.fromColors(
+                                                  baseColor: Colors.grey[200],
+                                                  highlightColor: Colors.white,
+                                                  child: Container(
+                                                    width: 250,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.grey,
+                                                      borderRadius: BorderRadius.circular(10),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }),
+                                      );
+                                    }
+                                    return Container(
+                                      height: 242,
+                                      width: double.infinity,
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            height: 242,
+                                            child: ListView.builder(
+                                                scrollDirection: Axis.horizontal,
+                                                itemCount: snapshot.data.length,
+                                                itemBuilder: (BuildContext context, int index) {
+                                                  return Padding(
+                                                    padding: const EdgeInsets.only(
+                                                        left: 15.0, right: 15.0, bottom: 15.0),
+                                                    child: Container(
+                                                      height: double.infinity,
+                                                      width: 250,
+                                                      decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(10),
+                                                          color: Colors.white,
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                              color: Colors.grey[350],
+                                                              blurRadius: 5,
+                                                              offset: Offset(3, 5),
+                                                            ),
+                                                          ]),
+                                                      child: Stack(
+                                                        children: [
+                                                          Column(
+                                                            children: [
+                                                              CachedNetworkImage(
+                                                                height: 150,
+                                                                imageUrl: snapshot.data[index].img,
+                                                                imageBuilder: (context, imageProvider) =>
+                                                                    Container(
+                                                                  decoration: BoxDecoration(
+                                                                    borderRadius: BorderRadius.only(
+                                                                        topLeft: Radius.circular(10),
+                                                                        topRight: Radius.circular(10)),
+                                                                    image: DecorationImage(
+                                                                      image: imageProvider,
+                                                                      fit: BoxFit.fill,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                placeholder: (context, url) =>
+                                                                    Image.asset("assets/images/logo.png"),
+                                                                errorWidget: (context, url, error) =>
+                                                                    Image.asset("assets/images/logo.png"),
                                                               ),
-                                                              child: Align(
-                                                                alignment: Alignment.center,
+                                                              Expanded(
+                                                                child: Container(
+                                                                  decoration: BoxDecoration(
+                                                                      border: Border(
+                                                                          top: BorderSide(
+                                                                              color: Color(0xff993955),
+                                                                              width: 2))),
+                                                                  child: Padding(
+                                                                    padding: const EdgeInsets.only(top: 15),
+                                                                    child: Align(
+                                                                      alignment: Alignment.centerLeft,
+                                                                      child: Column(
+                                                                        children: [
+                                                                          Expanded(
+                                                                            child: Padding(
+                                                                              padding: const EdgeInsets.only(
+                                                                                left: 8.0,
+                                                                                right: 8,
+                                                                              ),
+                                                                              child: Align(
+                                                                                alignment:
+                                                                                    Alignment.centerLeft,
+                                                                                child: Text(
+                                                                                  snapshot.data[index].detail,
+                                                                                  textAlign: TextAlign.start,
+                                                                                  maxLines: 1,
+                                                                                  softWrap: false,
+                                                                                  overflow: TextOverflow.fade,
+                                                                                  style: TextStyle(
+                                                                                    fontSize: 16,
+                                                                                    fontFamily: "poppins",
+                                                                                    fontWeight:
+                                                                                        FontWeight.w800,
+                                                                                    color: Color(0xff993955),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          Expanded(
+                                                                            child: Padding(
+                                                                              padding: const EdgeInsets.only(
+                                                                                left: 8.0,
+                                                                                right: 8.0,
+                                                                              ),
+                                                                              child: Align(
+                                                                                alignment:
+                                                                                    Alignment.centerLeft,
+                                                                                child: Text(
+                                                                                  snapshot.data[index].detail,
+                                                                                  textAlign: TextAlign.start,
+                                                                                  maxLines: 1,
+                                                                                  softWrap: false,
+                                                                                  overflow:
+                                                                                      TextOverflow.ellipsis,
+                                                                                  style: TextStyle(
+                                                                                    fontSize: 12,
+                                                                                    color: Colors.grey,
+                                                                                    fontFamily: "poppins",
+                                                                                    fontWeight:
+                                                                                        FontWeight.w600,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                          Align(
+                                                            alignment: Alignment.topCenter,
+                                                            child: Padding(
+                                                              padding: const EdgeInsets.only(
+                                                                right: 10.0,
+                                                                top: 135.0,
+                                                                bottom: 30.0,
+                                                              ),
+                                                              child: Container(
+                                                                height: 28,
+                                                                width: 140,
+                                                                decoration: BoxDecoration(
+                                                                    color: Colors.white,
+                                                                    borderRadius: BorderRadius.circular(15),
+                                                                    boxShadow: [
+                                                                      BoxShadow(
+                                                                        color: Colors.grey[350],
+                                                                        blurRadius: 3,
+                                                                        offset: Offset(2, 3),
+                                                                      ),
+                                                                    ]),
                                                                 child: Padding(
-                                                                  padding: const EdgeInsets.all(8.0),
-                                                                  child: Column(
+                                                                  padding: const EdgeInsets.all(3.0),
+                                                                  child: Row(
                                                                     children: [
                                                                       Expanded(
                                                                         child: Text(
-                                                                          snapshot.data[index].day.toString(),
-                                                                          style: TextStyle(
-                                                                            color: Colors.white,
-                                                                            fontSize: 18,
-                                                                            fontFamily: "baloobhai",
-                                                                            fontWeight: FontWeight.w800,
-                                                                            height: 1,
-                                                                          ),
+                                                                          "18 Sept. 2021",
                                                                           overflow: TextOverflow.ellipsis,
                                                                           textAlign: TextAlign.center,
-                                                                        ),
-                                                                      ),
-                                                                      Expanded(
-                                                                        child: Text(
-                                                                          snapshot.data[index].month
-                                                                              .toString(),
                                                                           style: TextStyle(
-                                                                            color: Colors.white,
-                                                                            fontSize: 14,
-                                                                            fontFamily: "baloobhai",
-                                                                            fontWeight: FontWeight.w400,
-                                                                            height: 1,
-                                                                          ),
-                                                                          overflow: TextOverflow.ellipsis,
-                                                                          textAlign: TextAlign.center,
+                                                                              color: Color(0xff1B6488),
+                                                                              fontSize: 18,
+                                                                              height: 1.15,
+                                                                              fontFamily: "baloobhai",
+                                                                              fontWeight: FontWeight.w600),
                                                                         ),
                                                                       ),
                                                                     ],
@@ -554,9 +918,9 @@ class _HomePageState extends State<HomePage> {
                                                           )
                                                         ],
                                                       ),
-                                                    );
-                                                  }),
-                                            ),
+                                                    ),
+                                                  );
+                                                }),
                                           ),
                                         ],
                                       ),
@@ -565,236 +929,37 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ],
                         ),
-                        Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 28),
-                              child: FutureBuilder(
-                                  future: getUpcomingUrl(),
-                                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                                    if (!snapshot.hasData) {
-                                      return Container(
-                                        height: 200.0,
-                                        width: 350.0,
-                                        color: Colors.blue,
+                        Container(
+                          height: 180,
+                          child: Column(
+                            children: [
+                              FeatureTitle("Connect with Us", Color(0xffeaf6a9), Color(0xff8BA02C), () {
+                                print("Connect with Us");
+                              }),
+                              Container(
+                                height: 80,
+                                child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: socialMedia.length,
+                                    shrinkWrap: true,
+                                    itemBuilder: (BuildContext ctx, int index) {
+                                      return GestureDetector(
+                                        onTap: () {
+                                          __launchBrowser(socialMedia[index][2].toString());
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: Container(
+                                            child: Image.asset(
+                                              socialMedia[index][0],
+                                              fit: BoxFit.fill,
+                                            ),
+                                          ),
+                                        ),
                                       );
-                                    }
-                                    return Container(
-                                      height: 300,
-                                      width: double.infinity,
-                                      child: Column(
-                                        children: [
-                                          FeatureTitle("Recent Events", Color(0xffffaec5), Color(0xff993955)),
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: 8.0),
-                                            child: Container(
-                                              height: 242,
-                                              child: ListView.builder(
-                                                  scrollDirection: Axis.horizontal,
-                                                  itemCount: snapshot.data.length,
-                                                  itemBuilder: (BuildContext context, int index) {
-                                                    return Padding(
-                                                      padding: const EdgeInsets.only(
-                                                          top: 10.0, left: 15.0, right: 15.0, bottom: 15.0),
-                                                      child: Container(
-                                                        height: double.infinity,
-                                                        width: 250,
-                                                        decoration: BoxDecoration(
-                                                            borderRadius: BorderRadius.circular(10),
-                                                            color: Colors.white,
-                                                            boxShadow: [
-                                                              BoxShadow(
-                                                                color: Colors.grey[350],
-                                                                blurRadius: 5,
-                                                                offset: Offset(3, 5),
-                                                              ),
-                                                            ]),
-                                                        child: Stack(
-                                                          children: [
-                                                            Column(
-                                                              children: [
-                                                                CachedNetworkImage(
-                                                                  height: 150,
-                                                                  imageUrl: snapshot.data[index].img,
-                                                                  imageBuilder: (context, imageProvider) =>
-                                                                      Container(
-                                                                    decoration: BoxDecoration(
-                                                                      borderRadius: BorderRadius.only(
-                                                                          topLeft: Radius.circular(10),
-                                                                          topRight: Radius.circular(10)),
-                                                                      image: DecorationImage(
-                                                                        image: imageProvider,
-                                                                        fit: BoxFit.fill,
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  errorWidget: (context, url, error) =>
-                                                                      Icon(Icons.error),
-                                                                ),
-                                                                Expanded(
-                                                                  child: Container(
-                                                                    decoration: BoxDecoration(
-                                                                        border: Border(
-                                                                            top: BorderSide(
-                                                                                color: Color(0xff993955),
-                                                                                width: 2))),
-                                                                    child: Padding(
-                                                                      padding: const EdgeInsets.only(top: 15),
-                                                                      child: Align(
-                                                                        alignment: Alignment.centerLeft,
-                                                                        child: Column(
-                                                                          children: [
-                                                                            Expanded(
-                                                                              child: Padding(
-                                                                                padding:
-                                                                                    const EdgeInsets.only(
-                                                                                  left: 8.0,
-                                                                                ),
-                                                                                child: Align(
-                                                                                  alignment:
-                                                                                      Alignment.centerLeft,
-                                                                                  child: Text(
-                                                                                    snapshot
-                                                                                        .data[index].detail,
-                                                                                    textAlign:
-                                                                                        TextAlign.start,
-                                                                                    maxLines: 1,
-                                                                                    style: TextStyle(
-                                                                                      fontSize: 16,
-                                                                                      fontFamily: "poppins",
-                                                                                      fontWeight:
-                                                                                          FontWeight.w800,
-                                                                                      color:
-                                                                                          Color(0xff993955),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                            Expanded(
-                                                                              child: Padding(
-                                                                                padding:
-                                                                                    const EdgeInsets.only(
-                                                                                  left: 8.0,
-                                                                                ),
-                                                                                child: Align(
-                                                                                  alignment:
-                                                                                      Alignment.centerLeft,
-                                                                                  child: Text(
-                                                                                    snapshot
-                                                                                        .data[index].detail,
-                                                                                    textAlign:
-                                                                                        TextAlign.start,
-                                                                                    maxLines: 1,
-                                                                                    style: TextStyle(
-                                                                                      fontSize: 12,
-                                                                                      color: Colors.grey,
-                                                                                      fontFamily: "poppins",
-                                                                                      fontWeight:
-                                                                                          FontWeight.w600,
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                )
-                                                              ],
-                                                            ),
-                                                            Align(
-                                                              alignment: Alignment.topCenter,
-                                                              child: Padding(
-                                                                padding: const EdgeInsets.only(
-                                                                  right: 10.0,
-                                                                  top: 135.0,
-                                                                  bottom: 30.0,
-                                                                ),
-                                                                child: Container(
-                                                                  height: 28,
-                                                                  width: 140,
-                                                                  decoration: BoxDecoration(
-                                                                      color: Colors.white,
-                                                                      borderRadius: BorderRadius.circular(15),
-                                                                      boxShadow: [
-                                                                        BoxShadow(
-                                                                          color: Colors.grey[350],
-                                                                          blurRadius: 3,
-                                                                          offset: Offset(2, 3),
-                                                                        ),
-                                                                      ]),
-                                                                  child: Padding(
-                                                                    padding: const EdgeInsets.all(3.0),
-                                                                    child: Row(
-                                                                      children: [
-                                                                        Expanded(
-                                                                          child: Text(
-                                                                            "18 Sept. 2021",
-                                                                            overflow: TextOverflow.ellipsis,
-                                                                            textAlign: TextAlign.center,
-                                                                            style: TextStyle(
-                                                                                color: Color(0xff1B6488),
-                                                                                fontSize: 18,
-                                                                                height: 1.15,
-                                                                                fontFamily: "baloobhai",
-                                                                                fontWeight: FontWeight.w600),
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            )
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20.0),
-                          child: Container(
-                            height: 130,
-                            child: Column(
-                              children: [
-                                FeatureTitle("Connect with Us", Color(0xffeaf6a9), Color(0xff8BA02C)),
-                                Container(
-                                  height: 80,
-                                  child: ListView.builder(
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: socialMedia.length,
-                                      shrinkWrap: true,
-                                      itemBuilder: (BuildContext ctx, int index) {
-                                        return GestureDetector(
-                                          onTap: () {
-                                            __launchBrowser(socialMedia[index][2].toString());
-                                          },
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(12.0),
-                                            child: Container(
-                                              child: Image.asset(
-                                                socialMedia[index][0],
-                                                fit: BoxFit.fill,
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      }),
-                                ),
-                              ],
-                            ),
+                                    }),
+                              ),
+                            ],
                           ),
                         ),
                         Padding(
@@ -918,63 +1083,68 @@ AnimatedContainer Dots() {
 class FeatureTitle extends StatelessWidget {
   String title;
   Color textColor, bgColor;
+  Function onClick;
 
-  FeatureTitle(String title, Color textColor, Color bgColor) {
+  FeatureTitle(String title, Color textColor, Color bgColor, Function onClick) {
     this.title = title;
     this.textColor = Colors.white;
     this.bgColor = bgColor;
+    this.onClick = onClick;
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 15.0),
+      padding: const EdgeInsets.only(bottom: 30, top: 30),
       child: Align(
         alignment: Alignment.centerLeft,
         child: Row(
           children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius:
-                    BorderRadius.only(topRight: Radius.circular(15), bottomRight: Radius.circular(15.0)),
-                color: bgColor,
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 30,
-                    height: 16,
-                    color: textColor,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Text(
-                      title,
-                      style: TextStyle(
-                          fontSize: 22,
-                          fontFamily: "baloobhai",
+            GestureDetector(
+              onTap: onClick,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius:
+                      BorderRadius.only(topRight: Radius.circular(20), bottomRight: Radius.circular(20)),
+                  color: bgColor,
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 30,
+                      height: 16,
+                      color: textColor,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                            fontSize: 22,
+                            fontFamily: "baloobhai",
+                            color: textColor,
+                            fontWeight: FontWeight.w700,
+                            backgroundColor: bgColor),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                      child: Container(
+                        height: 22,
+                        width: 22,
+                        decoration: BoxDecoration(
                           color: textColor,
-                          fontWeight: FontWeight.w700,
-                          backgroundColor: bgColor),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-                    child: Container(
-                      height: 22,
-                      width: 22,
-                      decoration: BoxDecoration(
-                        color: textColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Icon(
-                        Icons.navigate_next,
-                        color: bgColor,
-                        size: 22,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Icon(
+                          Icons.navigate_next,
+                          color: bgColor,
+                          size: 22,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             Expanded(
